@@ -5,7 +5,7 @@ Unfortunately, I didn't have public repositories I could show, but only old proo
 
 This repo is kind of a template I use when starting up new FastAPI projects:
 - production-ready Dockerfile
-  - gunicorn with dynamic workers configuration (stolen from [@tiangolo](https://github.com/tiangolo))
+  - gunicorn with dynamic workers configuration (stolen from [@tiangolo](https://github.com/tiangolo)) and JSON logs
   - optimized for small size and fast builds
   - non-root user
 - easy local development
