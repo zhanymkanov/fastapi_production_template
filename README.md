@@ -12,6 +12,11 @@ This repo is kind of a template I use when starting up new FastAPI projects:
   - environment with configured postgres and redis
   - script to lint code with `black`, `autoflake`, `isort`
   - configured pytest with `async-asgi-testclient`, `pytest-env`, `pytest-asyncio`
+  - fully typed to comply with `mypy`
+- SQLAlchemy with slightly configured `alembic`
+  - async db calls with `asyncpg`
+  - set up `sqlalchemy2-stubs`
+  - migrations set in easy to sort format (`YYYY-MM-DD_slug`)
 - pre-installed JWT authorization
   - short-lived access token
   - long-lived refresh token which lives in http-only cookies
