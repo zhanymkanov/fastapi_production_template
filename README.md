@@ -1,5 +1,5 @@
 # FastAPI Example Project
-Some people were searching my GitHub profile for project examples after reading the article on [FastAPI best practices]((https://github.com/zhanymkanov/fastapi-best-practices)).
+Some people were searching my GitHub profile for project examples after reading the article on [FastAPI best practices](https://github.com/zhanymkanov/fastapi-best-practices).
 Unfortunately, I didn't have useful public repositories, but only my old proof-of-concept projects. 
 Hence, I have decided to fix that and show how I start projects nowadays, after getting some real-world experience.
 
