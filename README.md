@@ -5,13 +5,13 @@ Unfortunately, I didn't have useful public repositories, but only my old proof-o
 Hence, I have decided to fix that and show how I start projects nowadays, after getting some real-world experience. 
 This repo is kind of a template I use when starting up new FastAPI projects:
 - production-ready
-  - gunicorn with dynamic workers configuration (stolen from @tiangolo)
+  - gunicorn with dynamic workers configuration (stolen from [@tiangolo](https://github.com/tiangolo))
   - Dockerfile optimized for small size and fast builds with a non-root user
   - JSON logs
   - sentry for deployed envs
 - easy local development
   - environment with configured postgres and redis
-  - script to lint code with `black`, `autoflake`, `isort` (also stolen from @tiangolo)
+  - script to lint code with `black`, `autoflake`, `isort` (also stolen from [@tiangolo](https://github.com/tiangolo))
   - configured pytest with `async-asgi-testclient`, `pytest-env`, `pytest-asyncio`
   - fully typed to comply with `mypy`
 - SQLAlchemy with slightly configured `alembic`
