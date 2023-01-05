@@ -1,7 +1,7 @@
 # FastAPI Example Project
-A lot of people after reading my previous article on [FastAPI best practices](https://github.com/zhanymkanov/fastapi-best-practices)
-were searching my profile for project examples based on that conventions. 
-Unfortunately, I didn't have public repositories I could show, but only old proof of concept samples. 
+Some people were searching my GitHub profile for project examples after reading the article on [FastAPI best practices]((https://github.com/zhanymkanov/fastapi-best-practices)).
+Unfortunately, I didn't have useful public repositories, but only my old proof-of-concept projects. 
+Hence, I have decided to fix that and show how I start projects nowadays, after getting some real-world experience.
 
 This repo is kind of a template I use when starting up new FastAPI projects:
 - production-ready Dockerfile
