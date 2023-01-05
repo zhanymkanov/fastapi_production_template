@@ -1,0 +1,3 @@
+-r base.txt
+python-json-logger
+gunicorn

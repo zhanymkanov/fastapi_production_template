@@ -1,0 +1,15 @@
+aioredis==2.0.1
+alembic==1.9.1
+bcrypt
+databases[asyncpg]==0.7.0
+orjson==3.8.4
+psycopg2==2.9.5
+python-jose==3.3.0
+SQLAlchemy==1.4.46
+httpx==0.23.3
+
+pydantic[email]==1.10.4
+fastapi==0.88.0
+uvicorn[standard]==0.20.0
+
+sentry-sdk==1.12.1

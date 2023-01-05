@@ -1,0 +1,42 @@
+name: Run linter checks
+
+on:
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  run_linters_tests:
+    name: Run linters and tests
+    runs-on: ubuntu-latest
+    container: python:3.10.7
+    services:
+      postgres:
+        image: postgres:14.1
+        env:
+          POSTGRES_PASSWORD: app
+          POSTGRES_USER: app
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        run: |
+          pip install -r requirements/dev.txt
+        continue-on-error: true
+      - name: Lint with flake8
+        run: |
+          flake8 src
+      - name: Lint with black
+        run: |
+          black src --check --diff
+      - name: Lint with mypy
+        run: |
+          mypy src tests
+      - name: Run tests
+        run: |
+          pytest

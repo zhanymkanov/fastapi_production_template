@@ -1,0 +1,14 @@
+-r base.txt
+black==22.12.0
+isort==5.11.4
+autoflake==2.0.0
+coverage==7.0.3
+flake8==6.0.0
+mypy==0.991
+pytest==7.2.0
+pytest-asyncio==0.20.3
+async-asgi-testclient==1.4.11
+pytest-env==0.8.1
+
+sqlalchemy2-stubs
+types-python-jose
