@@ -11,7 +11,7 @@ This repo is kind of a template I use when starting up new FastAPI projects:
   - sentry for deployed envs
 - easy local development
   - environment with configured postgres and redis
-  - script to lint code with `black`, `autoflake`, `isort`
+  - script to lint code with `black`, `autoflake`, `isort` (also stolen from @tiangolo)
   - configured pytest with `async-asgi-testclient`, `pytest-env`, `pytest-asyncio`
   - fully typed to comply with `mypy`
 - SQLAlchemy with slightly configured `alembic`
@@ -20,7 +20,7 @@ This repo is kind of a template I use when starting up new FastAPI projects:
   - migrations set in easy to sort format (`YYYY-MM-DD_slug`)
 - pre-installed JWT authorization
   - short-lived access token
-  - long-lived refresh token which lives in http-only cookies
+  - long-lived refresh token which is stored in http-only cookies
   - salted password storage with `bcrypt`
 - global pydantic model with 
   - `orjson`
