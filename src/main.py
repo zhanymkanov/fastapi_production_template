@@ -1,3 +1,6 @@
+from contextlib import asynccontextmanager
+from typing import AsyncGenerator
+
 import aioredis
 import sentry_sdk
 from fastapi import FastAPI
@@ -8,7 +11,24 @@ from src.auth.router import router as auth_router
 from src.config import app_configs, settings
 from src.database import database
 
-app = FastAPI(**app_configs)
+
+@asynccontextmanager
+async def lifespan(_application: FastAPI) -> AsyncGenerator:
+    # Startup
+    pool = aioredis.ConnectionPool.from_url(
+        settings.REDIS_URL, max_connections=10, decode_responses=True
+    )
+    redis.redis_client = aioredis.Redis(connection_pool=pool)
+    await database.connect()
+
+    yield
+
+    # Shutdown
+    await database.disconnect()
+    await redis.redis_client.close()
+
+
+app = FastAPI(**app_configs, lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -24,21 +44,6 @@ if settings.ENVIRONMENT.is_deployed:
         dsn=settings.SENTRY_DSN,
         environment=settings.ENVIRONMENT,
     )
-
-
-@app.on_event("startup")
-async def startup() -> None:
-    pool = aioredis.ConnectionPool.from_url(
-        settings.REDIS_URL, max_connections=10, decode_responses=True
-    )
-    redis.redis_client = aioredis.Redis(connection_pool=pool)
-    await database.connect()
-
-
-@app.on_event("shutdown")
-async def shutdown() -> None:
-    await database.disconnect()
-    await redis.redis_client.close()
 
 
 @app.get("/healthcheck", include_in_schema=False)

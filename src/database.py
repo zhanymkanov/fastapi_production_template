@@ -16,7 +16,7 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import UUID
 
 from src.config import settings
-from src.constants import DB_NAMING_CONVENTION, Environment
+from src.constants import DB_NAMING_CONVENTION
 
 DATABASE_URL = settings.DATABASE_URL
 
