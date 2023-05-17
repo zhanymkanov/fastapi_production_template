@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "fastapi_hackathon_template"
+version = "0.1.0"
+description = ""
+authors = ["Timur"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.95.2"
+orjson = "^3.8.12"
+SQLAlchemy = "^2.0.13"
+pydantic = {extras = ["email"], version = "^1.10.7"}
+uvicorn = {extras = ["standard"], version = "^0.22.0"}
+sentry-sdk = "^1.23.1"
+python-jose = "^3.3.0"
+mapped = "^20.4.2"
+alembic = "^1.11.0"
+asyncpg = "^0.27.0"
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

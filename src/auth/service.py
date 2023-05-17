@@ -1,87 +1,49 @@
-import uuid
-from datetime import datetime, timedelta
+from sqlalchemy import select
+from fastapi import Depends
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from databases.interfaces import Record
-from pydantic import UUID4
-from sqlalchemy import insert, select
-
-from src import utils
-from src.auth.config import auth_config
-from src.auth.exceptions import InvalidCredentials
-from src.auth.schemas import AuthUser
-from src.auth.security import check_password, hash_password
-from src.database import auth_user, database, refresh_tokens
+from src.auth.schemas import UserCreate
+from src.auth.security import hash_password
+from src.auth.models import User
+from functools import lru_cache
+from src.auth.exceptions import EmailTaken
+from src.database import get_session
 
 
-async def create_user(user: AuthUser) -> Record | None:
-    insert_query = (
-        insert(auth_user)
-        .values(
-            {
-                "email": user.email,
-                "password": hash_password(user.password),
-                "created_at": datetime.utcnow(),
-            }
+class UserService:
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    async def create(self, user: UserCreate) -> User:
+        user_exist = (
+                await self.get_by_email(user.email)
+                or await self.get_by_username(user.username)
         )
-        .returning(auth_user)
-    )
+        if user_exist:
+            raise EmailTaken
 
-    return await database.fetch_one(insert_query)
+        user_data = user.dict()
+        password = user_data.pop("password")
+        new_user = User(**user_data)
+        new_user.password = hash_password(password)
+        self.session.add(new_user)
+        return new_user
 
+    async def get_by_email(self, email: str) -> User:
+        user = await self.session.scalar(
+            select(User).where(User.email == email)
+        )
+        return user
 
-async def get_user_by_id(user_id: int) -> Record | None:
-    select_query = select(auth_user).where(auth_user.c.id == user_id)
-
-    return await database.fetch_one(select_query)
-
-
-async def get_user_by_email(email: str) -> Record | None:
-    select_query = select(auth_user).where(auth_user.c.email == email)
-
-    return await database.fetch_one(select_query)
-
-
-async def create_refresh_token(
-    *, user_id: int, refresh_token: str | None = None
-) -> str:
-    if not refresh_token:
-        refresh_token = utils.generate_random_alphanum(64)
-
-    insert_query = refresh_tokens.insert().values(
-        uuid=uuid.uuid4(),
-        refresh_token=refresh_token,
-        expires_at=datetime.utcnow() + timedelta(seconds=auth_config.REFRESH_TOKEN_EXP),
-        user_id=user_id,
-    )
-    await database.execute(insert_query)
-
-    return refresh_token
+    async def get_by_username(self, username: str) -> User:
+        user = await self.session.scalar(
+            select(User).where(User.username == username)
+        )
+        return user
 
 
-async def get_refresh_token(refresh_token: str) -> Record | None:
-    select_query = refresh_tokens.select().where(
-        refresh_tokens.c.refresh_token == refresh_token
-    )
-
-    return await database.fetch_one(select_query)
-
-
-async def expire_refresh_token(refresh_token_uuid: UUID4) -> None:
-    update_query = (
-        refresh_tokens.update()
-        .values(expires_at=datetime.utcnow() - timedelta(days=1))
-        .where(refresh_tokens.c.uuid == refresh_token_uuid)
-    )
-
-    await database.execute(update_query)
-
-
-async def authenticate_user(auth_data: AuthUser) -> Record:
-    user = await get_user_by_email(auth_data.email)
-    if not user:
-        raise InvalidCredentials()
-
-    if not check_password(auth_data.password, user["password"]):
-        raise InvalidCredentials()
-
-    return user
+@lru_cache()
+def get_user_service(
+        session: AsyncSession = Depends(get_session),
+) -> UserService:
+    return UserService(session=session)

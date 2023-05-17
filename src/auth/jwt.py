@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 
-from databases.interfaces import Record
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
@@ -14,7 +13,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/users/tokens", auto_error=F
 
 def create_access_token(
     *,
-    user: Record,
+    user,
     expires_delta: timedelta = timedelta(minutes=auth_config.JWT_EXP),
 ) -> str:
     jwt_data = {

@@ -11,5 +11,8 @@ class AuthConfig(BaseSettings):
 
     SECURE_COOKIES: bool = True
 
+    class Config:
+        env_file = ".env"
+
 
 auth_config = AuthConfig()

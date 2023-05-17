@@ -23,6 +23,7 @@ class ORJSONModel(BaseModel):
         json_dumps = orjson_dumps
         json_encoders = {datetime: convert_datetime_to_gmt}
         allow_population_by_field_name = True
+        orm_mode = True
 
     @root_validator()
     def set_null_microseconds(cls, data: dict[str, Any]) -> dict[str, Any]:
