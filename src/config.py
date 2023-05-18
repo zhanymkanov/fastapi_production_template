@@ -1,12 +1,11 @@
 from typing import Any
-from pydantic import BaseSettings, PostgresDsn, RedisDsn, root_validator
+from pydantic import BaseSettings, PostgresDsn, root_validator
 
 from src.constants import Environment
 
 
 class Config(BaseSettings):
     DATABASE_URL: PostgresDsn
-    REDIS_URL: RedisDsn
 
     SITE_DOMAIN: str = "myapp.com"
 
