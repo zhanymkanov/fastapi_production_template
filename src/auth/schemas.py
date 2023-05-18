@@ -6,15 +6,9 @@ from src.models import ORJSONModel
 STRONG_PASSWORD_PATTERN = re.compile(r"^(?=.*[\d])(?=.*[!@#$%^&*])[\w!@#$%^&*]{6,128}$")
 
 
-class UserBase(ORJSONModel):
-    first_name: str
-    last_name: str
-    username: str
+class AuthUser(ORJSONModel):
     email: EmailStr
-
-
-class UserDetail(UserBase):
-    password: str
+    password: str = Field(min_length=6, max_length=128)
 
     @validator("password")
     def valid_password(cls, password: str) -> str:
@@ -30,10 +24,6 @@ class UserDetail(UserBase):
         return password
 
 
-class UserResponse(UserBase):
-    is_admin: bool
-
-
 class JWTData(ORJSONModel):
     user_id: int = Field(alias="sub")
     is_admin: bool = False
@@ -42,3 +32,7 @@ class JWTData(ORJSONModel):
 class AccessTokenResponse(ORJSONModel):
     access_token: str
     refresh_token: str
+
+
+class UserResponse(ORJSONModel):
+    email: EmailStr

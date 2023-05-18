@@ -1,15 +1,13 @@
-import uuid
-from sqlalchemy import UUID, DateTime
-from sqlalchemy.orm import mapped_column
+from sqlalchemy import DateTime
+from sqlalchemy.orm import mapped_column, DeclarativeBase
 from sqlalchemy.sql import func
 from sqlalchemy.ext.asyncio import (
-    async_sessionmaker, create_async_engine, AsyncSession
+    async_sessionmaker, create_async_engine
 )
-from sqlalchemy.orm import DeclarativeBase
 
 from src.config import settings
 
-__all__ = ("get_session", "Base", "DATABASE_URL")
+__all__ = ("async_session", "Base", "DATABASE_URL")
 
 DATABASE_URL = settings.DATABASE_URL
 
@@ -24,13 +22,6 @@ async_session = async_sessionmaker(
 )
 
 
-async def get_session() -> AsyncSession:
-    async with async_session() as session:
-        yield session
-        await session.commit()
-
-
 class Base(DeclarativeBase):
-    id = mapped_column(UUID, primary_key=True, default=uuid.uuid4)
     created_at = mapped_column(DateTime, server_default=func.now(), nullable=False)
     updated_at = mapped_column(DateTime, server_onupdate=func.now())

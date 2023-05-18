@@ -1,93 +1,85 @@
-import datetime
+import uuid
+from datetime import datetime, timedelta
 
-from fastapi import Depends
-from fastapi.security import OAuth2PasswordRequestForm
-from functools import lru_cache
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-from jose import JWTError, jwt
+from pydantic.types import UUID4
+from sqlalchemy import select, update
+
 from src.auth.config import auth_config
-from src.auth.schemas import UserDetail, UserBase
-from src.auth.security import hash_password, check_password
-from src.auth.models import User
-from src.auth.exceptions import EmailTaken, InvalidCredentials
-from src.database import get_session
+from src.auth.exceptions import InvalidCredentials
+from src.auth.schemas import AuthUser
+from src.auth.security import check_password, hash_password
+from src.auth.models import User, Token
+from src.database import async_session
+from src import utils
 
 
-class UserService:
-    def __init__(self, session: AsyncSession):
-        self.session = session
-
-    async def create(self, user: UserDetail) -> User:
-        user_exist = await self.get_by_username_or_email(user)
-
-        if user_exist:
-            raise EmailTaken
-
-        user_data = user.dict()
-        password = user_data.pop("password")
-        new_user = User(**user_data)
-        new_user.password = hash_password(password)
-        self.session.add(new_user)
-        await self.session.commit()
+async def create_user(user: AuthUser) -> User | None:
+    async with async_session() as session:
+        new_user = User(**user.dict())
+        new_user.password = hash_password(user.password)
+        session.add(new_user)
+        await session.commit()
         return new_user
 
-    async def get_by_email(self, email: str) -> User | None:
-        user = await self.session.scalar(
+
+async def get_user_by_id(user_id: int) -> User | None:
+    async with async_session() as session:
+        user = await session.scalar(
+            select(User).where(User.id == user_id)
+        )
+        return user
+
+
+async def get_user_by_email(email: str) -> User | None:
+    async with async_session() as session:
+        user = await session.scalar(
             select(User).where(User.email == email)
         )
         return user
 
-    async def get_by_username_or_email(
-            self, user: OAuth2PasswordRequestForm | UserBase
-    ) -> User | None:
-        user = await self.session.scalar(
-            select(User).where(
-                (User.username == user.username) |
-                (User.email == user.username)
-            )
+
+async def create_refresh_token(
+        *, user_id: int, refresh_token: str | None = None
+) -> str:
+    if not refresh_token:
+        refresh_token = utils.generate_random_alphanum(64)
+
+    async with async_session() as session:
+        token = Token(
+            uuid=uuid.uuid4(),
+            refresh_token=refresh_token,
+            expires_at=datetime.utcnow() + timedelta(seconds=auth_config.REFRESH_TOKEN_EXP),
+            user_id=user_id
         )
-        return user
+        session.add(token)
+        await session.commit()
 
-    async def get_by_id(self, id: int) -> User | None:
-        user = await self.session.scalar(
-            select(User).where(User.id == id)
+    return refresh_token
+
+
+async def get_refresh_token(refresh_token: str) -> Token | None:
+    async with async_session() as session:
+        token = await session.scalar(
+            select(Token).where(Token.refresh_token == refresh_token)
         )
-        return user
-
-    async def authenticate(self, form_data: OAuth2PasswordRequestForm) -> User:
-        user = await self.get_by_username_or_email(form_data)
-        if user is None:
-            raise InvalidCredentials
-        if not check_password(form_data.password, user.password):
-            raise InvalidCredentials
-
-        return user
+        return token
 
 
-class JWTService:
-    def __init__(self, cash):
-        self.cash = cash
-
-    @staticmethod
-    def create_access_token(user: User):
-        jwt_data = {
-            "sub": str(user.id),
-            "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=auth_config.JWT_EXP),
-            "is_admin": user.is_admin,
-        }
-
-        return jwt.encode(jwt_data, auth_config.JWT_SECRET, algorithm=auth_config.JWT_ALG)
-
-    def create_refresh_token(self, user: User):
-        pass
-
-    def block_access_token(self):
-        pass
+async def expire_refresh_token(refresh_token_uuid: UUID4) -> None:
+    async with async_session() as session:
+        await session.execute(
+            update(Token)
+            .values(expires_at=datetime.utcnow() - timedelta(days=1))
+            .where(Token.uuid == refresh_token_uuid)
+        )
 
 
-@lru_cache()
-def get_user_service(
-        session: AsyncSession = Depends(get_session),
-) -> UserService:
-    return UserService(session=session)
+async def authenticate_user(auth_data: AuthUser) -> User:
+    user = await get_user_by_email(auth_data.email)
+    if not user:
+        raise InvalidCredentials()
+
+    if not check_password(auth_data.password, user.password):
+        raise InvalidCredentials()
+
+    return user
