@@ -6,6 +6,7 @@ from jose import JWTError, jwt
 
 from src.auth.config import auth_config
 from src.auth.exceptions import AuthorizationFailed, AuthRequired, InvalidToken
+from src.auth.models import User
 from src.auth.schemas import JWTData
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/users/tokens", auto_error=False)
@@ -13,13 +14,13 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/users/tokens", auto_error=F
 
 def create_access_token(
     *,
-    user,
+    user: User,
     expires_delta: timedelta = timedelta(minutes=auth_config.JWT_EXP),
 ) -> str:
     jwt_data = {
-        "sub": str(user["id"]),
+        "sub": str(user.id),
         "exp": datetime.utcnow() + expires_delta,
-        "is_admin": user["is_admin"],
+        "is_admin": user.is_admin,
     }
 
     return jwt.encode(jwt_data, auth_config.JWT_SECRET, algorithm=auth_config.JWT_ALG)

@@ -670,6 +670,17 @@ pycrypto = ["pycrypto (>=2.6.0,<2.7.0)", "pyasn1"]
 pycryptodome = ["pycryptodome (>=3.3.1,<4.0.0)", "pyasn1"]
 
 [[package]]
+name = "python-multipart"
+version = "0.0.6"
+description = "A streaming multipart parser for Python"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.extras]
+dev = ["atomicwrites (==1.2.1)", "attrs (==19.2.0)", "coverage (==6.5.0)", "hatch", "invoke (==1.7.3)", "more-itertools (==4.3.0)", "pbr (==4.3.0)", "pluggy (==1.0.0)", "py (==1.11.0)", "pytest-cov (==4.0.0)", "pytest-timeout (==2.1.0)", "pytest (==7.2.0)", "pyyaml (==5.1)"]
+
+[[package]]
 name = "pytz"
 version = "2023.3"
 description = "World timezone definitions, modern and historical"
@@ -1021,7 +1032,7 @@ python-versions = ">=3.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "2a1d62f0d42822df9d759eef3a67c57a2ef3af1c52e5b17f8d57e55c95f27b06"
+content-hash = "3a936a33c7dcec783d7bf276712243d01c0c0876330057970d0d66e67bd489d2"
 
 [metadata.files]
 affine = []
@@ -1086,6 +1097,7 @@ python-dateutil = [
 ]
 python-dotenv = []
 python-jose = []
+python-multipart = []
 pytz = []
 pyyaml = []
 rasterio = []

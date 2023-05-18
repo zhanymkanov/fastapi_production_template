@@ -1,5 +1,4 @@
 import re
-
 from pydantic import EmailStr, Field, validator
 
 from src.models import ORJSONModel
@@ -7,9 +6,15 @@ from src.models import ORJSONModel
 STRONG_PASSWORD_PATTERN = re.compile(r"^(?=.*[\d])(?=.*[!@#$%^&*])[\w!@#$%^&*]{6,128}$")
 
 
-class AuthUser(ORJSONModel):
+class UserBase(ORJSONModel):
+    first_name: str
+    last_name: str
+    username: str
     email: EmailStr
-    password: str = Field(min_length=6, max_length=128)
+
+
+class UserDetail(UserBase):
+    password: str
 
     @validator("password")
     def valid_password(cls, password: str) -> str:
@@ -25,8 +30,8 @@ class AuthUser(ORJSONModel):
         return password
 
 
-class UserCreate(AuthUser):
-    username: str
+class UserResponse(UserBase):
+    is_admin: bool
 
 
 class JWTData(ORJSONModel):
@@ -37,7 +42,3 @@ class JWTData(ORJSONModel):
 class AccessTokenResponse(ORJSONModel):
     access_token: str
     refresh_token: str
-
-
-class UserResponse(ORJSONModel):
-    email: EmailStr

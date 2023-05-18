@@ -1,8 +1,11 @@
-from sqlalchemy.ext.declarative import as_declarative
-from sqlalchemy.orm import Mapped, mapped_column
+import uuid
+from sqlalchemy import UUID, DateTime
+from sqlalchemy.orm import mapped_column
+from sqlalchemy.sql import func
 from sqlalchemy.ext.asyncio import (
     async_sessionmaker, create_async_engine, AsyncSession
 )
+from sqlalchemy.orm import DeclarativeBase
 
 from src.config import settings
 
@@ -27,6 +30,7 @@ async def get_session() -> AsyncSession:
         await session.commit()
 
 
-@as_declarative()
-class Base:
-    id: Mapped[int] = mapped_column(primary_key=True)
+class Base(DeclarativeBase):
+    id = mapped_column(UUID, primary_key=True, default=uuid.uuid4)
+    created_at = mapped_column(DateTime, server_default=func.now(), nullable=False)
+    updated_at = mapped_column(DateTime, server_onupdate=func.now())

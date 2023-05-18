@@ -1,5 +1,4 @@
 from typing import Any
-
 from pydantic import BaseSettings, PostgresDsn, RedisDsn, root_validator
 
 from src.constants import Environment
