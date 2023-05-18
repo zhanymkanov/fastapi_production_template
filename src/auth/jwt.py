@@ -18,7 +18,7 @@ def create_access_token(
     expires_delta: timedelta = timedelta(minutes=auth_config.JWT_EXP),
 ) -> str:
     jwt_data = {
-        "sub": user.id,
+        "sub": str(user.id),
         "exp": datetime.utcnow() + expires_delta,
         "is_admin": user.is_admin,
     }

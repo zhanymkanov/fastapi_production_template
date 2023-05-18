@@ -1,4 +1,5 @@
 from fastapi import APIRouter, BackgroundTasks, Depends, Response, status
+from fastapi.security import OAuth2PasswordRequestForm
 
 from src.auth import jwt, service, utils
 from src.auth.dependencies import (
@@ -15,7 +16,7 @@ router = APIRouter()
 
 @router.post("/users", status_code=status.HTTP_201_CREATED, response_model=UserResponse)
 async def register_user(
-    auth_data: AuthUser = Depends(valid_user_create),
+        auth_data: AuthUser = Depends(valid_user_create),
 ):
     user = await service.create_user(auth_data)
     return UserResponse.from_orm(user)
@@ -23,14 +24,17 @@ async def register_user(
 
 @router.get("/users/me", response_model=UserResponse)
 async def get_my_account(
-    jwt_data: JWTData = Depends(parse_jwt_user_data),
+        jwt_data: JWTData = Depends(parse_jwt_user_data),
 ):
     user = await service.get_user_by_id(jwt_data.user_id)
     return UserResponse.from_orm(user)
 
 
 @router.post("/users/tokens", response_model=AccessTokenResponse)
-async def auth_user(auth_data: AuthUser, response: Response) -> AccessTokenResponse:
+async def auth_user(
+        response: Response,
+        auth_data: OAuth2PasswordRequestForm = Depends()
+) -> AccessTokenResponse:
     user = await service.authenticate_user(auth_data)
     refresh_token_value = await service.create_refresh_token(user_id=user.id)
 
@@ -44,10 +48,10 @@ async def auth_user(auth_data: AuthUser, response: Response) -> AccessTokenRespo
 
 @router.put("/users/tokens", response_model=AccessTokenResponse)
 async def refresh_tokens(
-    worker: BackgroundTasks,
-    response: Response,
-    refresh_token: Token = Depends(valid_refresh_token),
-    user: User = Depends(valid_refresh_token_user),
+        worker: BackgroundTasks,
+        response: Response,
+        refresh_token: Token = Depends(valid_refresh_token),
+        user: User = Depends(valid_refresh_token_user),
 ) -> AccessTokenResponse:
     refresh_token_value = await service.create_refresh_token(
         user_id=refresh_token.user_id
@@ -63,8 +67,8 @@ async def refresh_tokens(
 
 @router.delete("/users/tokens")
 async def logout_user(
-    response: Response,
-    refresh_token: Token = Depends(valid_refresh_token),
+        response: Response,
+        refresh_token: Token = Depends(valid_refresh_token),
 ) -> None:
     await service.expire_refresh_token(refresh_token.uuid)
 

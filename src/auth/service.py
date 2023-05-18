@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 from pydantic.types import UUID4
 from sqlalchemy import select, update
+from fastapi.security import OAuth2PasswordRequestForm
 
 from src.auth.config import auth_config
 from src.auth.exceptions import InvalidCredentials
@@ -74,8 +75,8 @@ async def expire_refresh_token(refresh_token_uuid: UUID4) -> None:
         )
 
 
-async def authenticate_user(auth_data: AuthUser) -> User:
-    user = await get_user_by_email(auth_data.email)
+async def authenticate_user(auth_data: OAuth2PasswordRequestForm) -> User:
+    user = await get_user_by_email(auth_data.username)
     if not user:
         raise InvalidCredentials()
 
