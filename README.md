@@ -58,7 +58,7 @@ All tests are integrational and require DB connection.
 
 One of the choices I've made is to use default database (`postgres`), separated from app's `app` database.
 - Using default database makes it easier to run tests in CI/CD environments, since there is no need to setup additional databases
-- Tests are run with `force_rollbacke=True`, i.e. every transaction made is then reverted
+- Tests are run with `force_rollback=True`, i.e. every transaction made is then reverted
 
 Run tests
 ```shell
