@@ -1,9 +1,9 @@
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
-import aioredis
 import sentry_sdk
 from fastapi import FastAPI
+from redis import asyncio as aioredis
 from starlette.middleware.cors import CORSMiddleware
 
 from src import redis
