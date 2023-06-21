@@ -1,4 +1,4 @@
-aioredis==2.0.1
+redis==4.5.5
 alembic==1.9.1
 bcrypt
 databases[asyncpg]==0.7.0

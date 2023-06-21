@@ -1,8 +1,7 @@
 from datetime import timedelta
 from typing import Optional
 
-from aioredis import Redis
-
+from redis.asyncio import Redis
 from src.models import ORJSONModel
 
 redis_client: Redis = None  # type: ignore
