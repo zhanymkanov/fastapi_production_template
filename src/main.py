@@ -1,31 +1,30 @@
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
+import redis as aioredis
 import sentry_sdk
 from fastapi import FastAPI
-from redis import asyncio as aioredis
 from starlette.middleware.cors import CORSMiddleware
 
 from src import redis
 from src.auth.router import router as auth_router
 from src.config import app_configs, settings
-from src.database import database
 
 
 @asynccontextmanager
 async def lifespan(_application: FastAPI) -> AsyncGenerator:
     # Startup
     pool = aioredis.ConnectionPool.from_url(
-        settings.REDIS_URL, max_connections=10, decode_responses=True
+        str(settings.REDIS_URL), max_connections=10, decode_responses=True
     )
     redis.redis_client = aioredis.Redis(connection_pool=pool)
-    await database.connect()
 
     yield
 
+    if settings.ENVIRONMENT.is_testing:
+        return
     # Shutdown
-    await database.disconnect()
-    await redis.redis_client.close()
+    await pool.disconnect()
 
 
 app = FastAPI(**app_configs, lifespan=lifespan)

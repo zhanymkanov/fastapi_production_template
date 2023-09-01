@@ -1,4 +1,5 @@
-from databases.interfaces import Record
+from typing import Any
+
 from fastapi import APIRouter, BackgroundTasks, Depends, Response, status
 
 from src.auth import jwt, service, utils
@@ -19,7 +20,7 @@ async def register_user(
 ) -> dict[str, str]:
     user = await service.create_user(auth_data)
     return {
-        "email": user["email"],  # type: ignore
+        "email": user["email"],
     }
 
 
@@ -30,7 +31,7 @@ async def get_my_account(
     user = await service.get_user_by_id(jwt_data.user_id)
 
     return {
-        "email": user["email"],  # type: ignore
+        "email": user["email"],
     }
 
 
@@ -51,8 +52,8 @@ async def auth_user(auth_data: AuthUser, response: Response) -> AccessTokenRespo
 async def refresh_tokens(
     worker: BackgroundTasks,
     response: Response,
-    refresh_token: Record = Depends(valid_refresh_token),
-    user: Record = Depends(valid_refresh_token_user),
+    refresh_token: dict[str, Any] = Depends(valid_refresh_token),
+    user: dict[str, Any] = Depends(valid_refresh_token_user),
 ) -> AccessTokenResponse:
     refresh_token_value = await service.create_refresh_token(
         user_id=refresh_token["user_id"]
@@ -69,7 +70,7 @@ async def refresh_tokens(
 @router.delete("/users/tokens")
 async def logout_user(
     response: Response,
-    refresh_token: Record = Depends(valid_refresh_token),
+    refresh_token: dict[str, Any] = Depends(valid_refresh_token),
 ) -> None:
     await service.expire_refresh_token(refresh_token["uuid"])
 

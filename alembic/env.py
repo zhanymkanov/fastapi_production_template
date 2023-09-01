@@ -1,11 +1,10 @@
 from logging.config import fileConfig
 
+from sqlalchemy import engine_from_config, pool
+
 from alembic import context
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
-
-from src.database import metadata, DATABASE_URL
-
+from src.config import settings
+from src.database import metadata
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -26,6 +25,16 @@ target_metadata = metadata
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
+DATABASE_URL = str(settings.DATABASE_URL)
+
+db_driver = settings.DATABASE_URL.scheme
+db_driver_parts = db_driver.split("+")
+if len(db_driver_parts) > 1:  # e.g. postgresql+asyncpg
+    sync_scheme = db_driver_parts[0].strip()
+    DATABASE_URL = DATABASE_URL.replace(  # replace with sync driver
+        db_driver, sync_scheme
+    )
+
 config.set_main_option("sqlalchemy.url", DATABASE_URL)
 config.compare_type = True
 config.compare_server_default = True

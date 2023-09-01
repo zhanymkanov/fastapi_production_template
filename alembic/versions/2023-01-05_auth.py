@@ -1,13 +1,14 @@
 """auth
 
 Revision ID: d40f40264827
-Revises: 
+Revises:
 Create Date: 2023-01-05 12:08:49.446747
 
 """
-from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
+
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = "d40f40264827"

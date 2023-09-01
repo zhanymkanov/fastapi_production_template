@@ -2,15 +2,16 @@ from datetime import timedelta
 from typing import Optional
 
 from redis.asyncio import Redis
-from src.models import ORJSONModel
+
+from src.models import CustomModel
 
 redis_client: Redis = None  # type: ignore
 
 
-class RedisData(ORJSONModel):
+class RedisData(CustomModel):
     key: bytes | str
     value: bytes | str
-    ttl: Optional[int | timedelta]
+    ttl: Optional[int | timedelta] = None
 
 
 async def set_redis_key(redis_data: RedisData, *, is_transaction: bool = False) -> None:
