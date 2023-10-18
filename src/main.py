@@ -9,6 +9,7 @@ from starlette.middleware.cors import CORSMiddleware
 from src import redis
 from src.auth.router import router as auth_router
 from src.config import app_configs, settings
+from src.external_service.router import router as external_service_router
 
 
 @asynccontextmanager
@@ -51,3 +52,6 @@ async def healthcheck() -> dict[str, str]:
 
 
 app.include_router(auth_router, prefix="/auth", tags=["Auth"])
+app.include_router(
+    external_service_router, prefix="/external-service", tags=["External Service Calls"]
+)
