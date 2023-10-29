@@ -1,6 +1,5 @@
 -r base.txt
-black==23.7.0
-ruff==0.0.286
+ruff==0.1.3
 coverage==7.3.0
 mypy==1.5.1
 pytest==7.4.0

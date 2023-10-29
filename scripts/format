@@ -2,4 +2,4 @@
 set -x
 
 ruff --fix src
-black src
+ruff format src

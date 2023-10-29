@@ -7,6 +7,9 @@ up:
 kill:
   docker-compose kill
 
+build:
+  docker-compose build
+
 ps:
   docker-compose ps
 
@@ -24,10 +27,7 @@ downgrade *args:
 
 ruff *args:
   docker compose exec app ruff {{args}} src
-
-black:
-  docker compose exec app black src
+  docker compose exec app ruff format src
 
 lint:
-  just black
   just ruff --fix

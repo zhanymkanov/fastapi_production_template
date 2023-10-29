@@ -12,7 +12,7 @@ services:
     volumes:
       - ./:/src
     ports:
-      - "8000:8000"
+      - "16000:8000"
     depends_on:
       - app_db
 
@@ -27,7 +27,7 @@ services:
     volumes:
       - app_pg_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "65432:5432"
 
   app_redis:
     image: redis:6.2-alpine
@@ -37,7 +37,7 @@ services:
       - 'redis-server'
       - '--requirepass myStrongPassword'
     ports:
-      - 6379:6379
+      - 36379:6379
 
 volumes:
   app_pg_data:

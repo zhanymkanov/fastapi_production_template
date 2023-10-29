@@ -11,7 +11,7 @@ This repo is kind of a template I use when starting up new FastAPI projects:
   - sentry for deployed envs
 - easy local development
   - environment with configured postgres and redis
-  - script to lint code with `black` and `ruff`
+  - script to lint code with `ruff` and `ruff format`
   - configured pytest with `async-asgi-testclient`, `pytest-env`, `pytest-asyncio`
 - SQLAlchemy with slightly configured `alembic`
   - async SQLAlchemy engine
@@ -35,7 +35,7 @@ so there might be some workarounds instead of neat solutions, but overall idea o
 3. `docker-compose up -d --build`
 
 ### Linters
-Format the code with `ruff --fix` and black
+Format the code with `ruff --fix` and `ruff format`
 ```shell
 docker compose exec app format
 ```
