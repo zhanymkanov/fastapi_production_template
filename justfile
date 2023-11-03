@@ -16,6 +16,9 @@ ps:
 exec *args:
   docker-compose exec app {{args}}
 
+logs *args:
+    docker-compose logs {{args}} -f
+
 mm *args:
   docker compose exec app alembic revision --autogenerate -m "{{args}}"
 
