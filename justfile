@@ -34,3 +34,15 @@ ruff *args:
 
 lint:
   just ruff --fix
+
+backup:
+  docker compose exec app_db scripts/backup
+
+# examples:
+# "just get-backup dump_name_2021-01-01..backup.gz" to copy particular backup
+# "just get-backup" to copy directory (backups) with all dumps
+get-backup *args:
+  docker cp app_db:/backups/{{args}} ./{{args}}
+
+restore *args:
+    docker compose exec app_db scripts/restore {{args}}
