@@ -34,3 +34,5 @@ createdb "$POSTGRES_DB" --owner="$POSTGRES_USER" -U "$POSTGRES_USER"
 
 echo "Applying the backup to the new database..."
 gunzip -c "${full_file_path}" | pg_restore -U "$POSTGRES_USER" -d "$POSTGRES_DB"
+
+echo "Backup applied successfully."

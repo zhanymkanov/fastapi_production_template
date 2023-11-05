@@ -74,3 +74,27 @@ You can find all the shortcuts in `justfile` or run the following command to lis
 just --list
 ```
 Info about installation can be found [here](https://github.com/casey/just#packages).
+### Backup and Restore database
+We are using `pg_dump` and `pg_restore` to backup and restore the database.
+- Backup
+```shell
+just backup
+# output example
+Backup process started.
+Backup has been created and saved to /backups/backup-year-month-date-HHMMSS.dump.gz
+```
+
+- Copy the backup file or a directory with all backups to your local machine
+```shell
+just get-backup  # get all backups
+just get-backup backup-year-month-date-HHMMSS.dump.gz  # get a specific backup
+```
+- Restore
+```shell
+just restore backup-year-month-date-HHMMSS.dump.gz
+# output example
+Dropping the database...
+Creating a new database...
+Applying the backup to the new database...
+Backup applied successfully.
+```
