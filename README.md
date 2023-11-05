@@ -64,3 +64,13 @@ Run tests
 ```shell
 docker compose exec app pytest
 ```
+### Justfile
+The template is using [Just](https://github.com/casey/just). 
+
+It's a Makefile alternative written in Rust with a nice syntax.
+
+You can find all the shortcuts in `justfile` or run the following command to list them all:
+```shell
+just --list
+```
+Info about installation can be found [here](https://github.com/casey/just#packages).
