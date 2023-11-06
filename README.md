@@ -86,8 +86,8 @@ Backup has been created and saved to /backups/backup-year-month-date-HHMMSS.dump
 
 - Copy the backup file or a directory with all backups to your local machine
 ```shell
-just get-backup  # get all backups
-just get-backup backup-year-month-date-HHMMSS.dump.gz  # get a specific backup
+just mount-docker-backup  # get all backups
+just mount-docker-backup backup-year-month-date-HHMMSS.dump.gz  # get a specific backup
 ```
 - Restore
 ```shell
