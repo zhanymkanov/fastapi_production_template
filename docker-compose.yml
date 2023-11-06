@@ -20,12 +20,12 @@ services:
     container_name: app_db
     hostname: app_db
     image: library/postgres:14.1
-    environment:
-      - POSTGRES_USER=app
-      - POSTGRES_PASSWORD=app
-      - POSTGRES_DB=app
+    env_file:
+      - .env
     volumes:
       - app_pg_data:/var/lib/postgresql/data
+      - app_pg_data_backups:/backups
+      - ./scripts/postgres:/scripts
     ports:
       - "65432:5432"
 
@@ -41,6 +41,8 @@ services:
 
 volumes:
   app_pg_data:
+    driver: "local"
+  app_pg_data_backups:
     driver: "local"
 
 networks:
