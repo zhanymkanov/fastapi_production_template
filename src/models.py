@@ -25,7 +25,7 @@ class CustomModel(BaseModel):
         datetime_fields = {
             k: v.replace(microsecond=0)
             for k, v in data.items()
-            if isinstance(k, datetime)
+            if isinstance(v, datetime)
         }
 
         return {**data, **datetime_fields}
