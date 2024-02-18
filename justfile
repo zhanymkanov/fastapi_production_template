@@ -46,3 +46,7 @@ mount-docker-backup *args:
 
 restore *args:
     docker compose exec app_db scripts/restore {{args}}
+
+test:
+    docker compose exec app pytest
+
