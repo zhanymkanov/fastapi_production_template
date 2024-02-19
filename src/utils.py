@@ -3,6 +3,7 @@ import random
 import string
 
 logger = logging.getLogger(__name__)
+
 ALPHA_NUM = string.ascii_letters + string.digits
 
 
