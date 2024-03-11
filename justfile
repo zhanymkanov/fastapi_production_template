@@ -4,6 +4,9 @@ default:
 up:
   docker-compose up -d
 
+down:
+  docker-compose down
+
 kill:
   docker-compose kill
 
@@ -20,7 +23,7 @@ logs *args:
     docker-compose logs {{args}} -f
 
 mm *args:
-  docker compose exec app alembic revision --autogenerate -m "{{args}}"
+  docker compose exec app scripts/makemigrations {{args}}
 
 migrate:
   docker compose exec app alembic upgrade head
@@ -50,3 +53,5 @@ restore *args:
 test *args:
     docker compose exec app pytest {{args}}
 
+test-watch *args:
+    docker compose exec app ptw {{args}}
