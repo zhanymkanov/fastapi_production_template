@@ -49,7 +49,24 @@ refresh_tokens = Table(
     Column("created_at", DateTime, server_default=func.now(), nullable=False),
     Column("updated_at", DateTime, onupdate=func.now()),
 )
-
+roles = Table(
+    "roles",
+    metadata,
+    Column("id", Integer, Identity(), primary_key=True),
+    Column("name", String, nullable=False)
+)
+permissions = Table(
+    "permissions",
+    metadata,
+    Column("id", Integer, Identity(), primary_key=True),
+    Column("name", String, nullable=False)
+)
+role_permissions = Table(
+    "role_permissions",
+    metadata,
+    Column("role_id", ForeignKey("roles.id"), primary_key=True),
+    Column("permission_id", ForeignKey("permissions.id"), primary_key=True),
+)
 
 async def fetch_one(select_query: Select | Insert | Update) -> dict[str, Any] | None:
     async with engine.begin() as conn:
