@@ -20,62 +20,39 @@ depends_on = None
 def upgrade() -> None:
     
     op.create_table(
-        "roles",
-        sa.Column("id", sa.Integer(), sa.Identity(always=False), nullable=False),
-        sa.Column("name", sa.String(), nullable=False),
-        sa.PrimaryKeyConstraint("id", name=op.f("role_id"))
-
-    )
-    op.create_table(
-        "permissions",
-        sa.Column("id", sa.Integer(), sa.Identity(always=False), nullable=False),
-        sa.Column("name", sa.String(), nullable=False),
-        sa.PrimaryKeyConstraint("id", name=op.f("permission_id"))
-    )
-    op.create_table(
         "role_permissions",
+        sa.Column("id", sa.Integer(), sa.Identity(always=False), nullable=False),
         sa.Column("role_id", sa.Integer(), sa.Identity(always=False), nullable=False),
-        sa.Column("permission_id", sa.Integer(), sa.Identity(always=False), nullable=False),
+        sa.Column("permissions", sa.JSON(), sa.Identity(always=False), nullable=False),
         sa.ForeignKeyConstraint(
-            ["user_id"],
-            ["auth_user.id"],
-            name=op.f("auth_refresh_token_user_id_fkey"),
+            ["role_id"],
+            ["roles.id"],
             ondelete="CASCADE",
-        ),
+        )
         
     )
     op.create_table(
-        "auth_user",
+        "user_roles",
         sa.Column("id", sa.Integer(), sa.Identity(always=False), nullable=False),
-        sa.Column("email", sa.String(), nullable=False),
-        sa.Column("password", sa.LargeBinary(), nullable=False),
-        sa.Column("is_admin", sa.Boolean(), server_default="false", nullable=False),
-        sa.Column(
-            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False
-        ),
-        sa.Column("updated_at", sa.DateTime(), nullable=True),
-        sa.PrimaryKeyConstraint("id", name=op.f("auth_user_pkey")),
-    )
-    op.create_table(
-        "auth_refresh_token",
-        sa.Column("uuid", postgresql.UUID(), nullable=False),
-        sa.Column("user_id", sa.Integer(), nullable=False),
-        sa.Column("refresh_token", sa.String(), nullable=False),
-        sa.Column("expires_at", sa.DateTime(), nullable=False),
-        sa.Column(
-            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False
-        ),
-        sa.Column("updated_at", sa.DateTime(), nullable=True),
+        sa.Column("user_id", sa.Integer(), sa.Identity(always=False), nullable=False),
+        sa.Column("role_id", sa.Integer(), sa.Identity(always=False), nullable=False),
         sa.ForeignKeyConstraint(
             ["user_id"],
             ["auth_user.id"],
             name=op.f("auth_refresh_token_user_id_fkey"),
             ondelete="CASCADE",
         ),
-        sa.PrimaryKeyConstraint("uuid", name=op.f("auth_refresh_token_pkey")),
+        sa.ForeignKeyConstraint(
+            ["role_id"],
+            ["roles.id"],
+            ondelete="CASCADE",
+        )
+        
     )
 
 
 def downgrade() -> None:
-    op.drop_table("auth_refresh_token")
-    op.drop_table("auth_user")
+    op.drop_table("roles")
+    op.drop_table("permissions")
+    op.drop_table("role_permissions")
+    op.drop_table("user_roles")

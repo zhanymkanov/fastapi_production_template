@@ -3,32 +3,12 @@ from datetime import datetime, timedelta
 from typing import Any
 
 from pydantic import UUID4
-from sqlalchemy import insert, select
+from sqlalchemy import insert, select,update
 
 from src import utils
-from src.database import auth_user, execute, fetch_one, refresh_tokens
+from schemas import RolePermission,RoleDB,roles
+from db import role_permissionsT
 
-
-async def create_user(user: AuthUser) -> dict[str, Any] | None:
-    insert_query = (
-        insert(auth_user)
-        .values(
-            {
-                "email": user.email,
-                "password": hash_password(user.password),
-                "created_at": datetime.utcnow(),
-            }
-        )
-        .returning(auth_user)
-    )
-
-    return await fetch_one(insert_query)
-
-
-async def get_user_by_id(user_id: int) -> dict[str, Any] | None:
-    select_query = select(auth_user).where(auth_user.c.id == user_id)
-
-    return await fetch_one(select_query)
 
 
 async def get_user_by_email(email: str) -> dict[str, Any] | None:

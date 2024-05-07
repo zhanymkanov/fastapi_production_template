@@ -28,45 +28,7 @@ DATABASE_URL = str(settings.DATABASE_URL)
 engine = create_async_engine(DATABASE_URL)
 metadata = MetaData(naming_convention=DB_NAMING_CONVENTION)
 
-auth_user = Table(
-    "auth_user",
-    metadata,
-    Column("id", Integer, Identity(), primary_key=True),
-    Column("email", String, nullable=False),
-    Column("password", LargeBinary, nullable=False),
-    Column("is_admin", Boolean, server_default="false", nullable=False),
-    Column("created_at", DateTime, server_default=func.now(), nullable=False),
-    Column("updated_at", DateTime, onupdate=func.now()),
-)
 
-refresh_tokens = Table(
-    "auth_refresh_token",
-    metadata,
-    Column("uuid", UUID, primary_key=True),
-    Column("user_id", ForeignKey("auth_user.id", ondelete="CASCADE"), nullable=False),
-    Column("refresh_token", String, nullable=False),
-    Column("expires_at", DateTime, nullable=False),
-    Column("created_at", DateTime, server_default=func.now(), nullable=False),
-    Column("updated_at", DateTime, onupdate=func.now()),
-)
-roles = Table(
-    "roles",
-    metadata,
-    Column("id", Integer, Identity(), primary_key=True),
-    Column("name", String, nullable=False)
-)
-permissions = Table(
-    "permissions",
-    metadata,
-    Column("id", Integer, Identity(), primary_key=True),
-    Column("name", String, nullable=False)
-)
-role_permissions = Table(
-    "role_permissions",
-    metadata,
-    Column("role_id", ForeignKey("roles.id"), primary_key=True),
-    Column("permission_id", ForeignKey("permissions.id"), primary_key=True),
-)
 
 async def fetch_one(select_query: Select | Insert | Update) -> dict[str, Any] | None:
     async with engine.begin() as conn:

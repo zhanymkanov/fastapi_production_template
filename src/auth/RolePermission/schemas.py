@@ -3,24 +3,33 @@ import re
 from pydantic import EmailStr, Field, field_validator
 
 from src.models import CustomModel
-
+from config import permission_conf
 STRONG_PASSWORD_PATTERN = re.compile(r"^(?=.*[\d])(?=.*[!@#$%^&*])[\w!@#$%^&*]{6,128}$")
 
 
-
-class Role(CustomModel):
-    id: int = None
-    name: str
-
-
-class Permission(CustomModel):
-    id: int = None
-    name: str
-
-
 class RolePermission(CustomModel):
-    role_id: int
-    permission_id: int
+    name: str
+    permissions:dict
+
+    @field_validator("permissions", mode="after")
+    @classmethod
+    def valid_password(cls, permissions: dict) -> dict:
+        for (permission,actions) in permissions.items():
+            if permission not in permission_conf:
+                raise ValueError(
+                    "permission not found"
+                )
+            for action in actions:
+                if action not in permission_conf[permission].actions:
+                    raise ValueError(
+                    f"{permission} actions are [{permission_conf[permission].actions.join(",")}]"
+                    )   
+                
+
+        return permissions
+
+
+
 
 
 class RoleDB(CustomModel):

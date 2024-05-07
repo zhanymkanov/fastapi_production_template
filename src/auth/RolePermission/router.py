@@ -1,13 +1,25 @@
 from typing import Any
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Response, status
-from schemas import Role,RoleDB
+from schemas import RolePermission,RoleDB
 router = APIRouter()
 
 # CRUD operations for roles
 
+@router.post("/permissions/", response_model=RoleDB)
+async def create_rolepermision(role: RolePermission):
+    try:
+        db_role = RoleTable(name=role.name)
+        db.add(db_role)
+        db.commit()
+        db.refresh(db_role)
+        return RoleDB.from_orm(db_role)
+    except ValidationError as e:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 @router.post("/roles/", response_model=RoleDB)
-async def create_role(role: Role):
+async def create_rolepermision(role: RolePermission):
     try:
         db_role = RoleTable(name=role.name)
         db.add(db_role)

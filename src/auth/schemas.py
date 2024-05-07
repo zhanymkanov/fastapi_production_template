@@ -38,3 +38,6 @@ class AccessTokenResponse(CustomModel):
 
 class UserResponse(CustomModel):
     email: EmailStr
+
+
+ 
