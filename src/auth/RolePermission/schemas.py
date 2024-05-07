@@ -29,19 +29,7 @@ class RolePermission(CustomModel):
         return permissions
 
 
-
-
-
-class RoleDB(CustomModel):
-    id: int
-    name: str
-    permissions: list[Permission] = []
-
-    class Config:
-        orm_mode = True
-
-
-class PermissionDB(CustomModel):
+class RolePermissionDB(CustomModel):
     id: int
     name: str
     roles: list[Role] = []

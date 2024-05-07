@@ -22,7 +22,7 @@ from sqlalchemy import (
     JSON
 )
 from src.database import metadata
-from schemas import RolePermission,RoleDB,roles
+from schemas import RolePermission,RolePermissionDB
 from src.database import auth_user, execute, fetch_one,fetch_all, refresh_tokens
 from typing import Any
 
@@ -45,8 +45,8 @@ user_rolesT = Table(
 async def get_role_permission_by_id(id:int):
     select_query=(select(role_permissionsT).where(role_permissionsT.id == id))
     return await fetch_one(select_query)
-async def update_role_permission_by_id(id:int,rp:RolePermission):
-    update_query=(update(role_permissionsT).values(rp.serializable_dict()).where(role_permissionsT.id == id))
+async def update_role_permission(rp:RolePermissionDB):
+    update_query=(update(role_permissionsT).values(rp.serializable_dict()).where(role_permissionsT.id == rp.id))
     return await fetch_one(update_query)
 
 async def create_role_permissions(rp:RolePermission) -> dict[str, Any] | None:
@@ -55,7 +55,7 @@ async def create_role_permissions(rp:RolePermission) -> dict[str, Any] | None:
                    .returning(role_permissionsT)
                    )
     return await fetch_one(insert_query)
-def paginate_role_permissions(table:Table, page=1, per_page=10):
+def paginate_role_permissions(table:Table=role_permissionsT, page=1, per_page=10):
   """
   This function retrieves a paginated list of role_permissions.
 
@@ -84,9 +84,6 @@ def paginate_role_permissions(table:Table, page=1, per_page=10):
       "data": data,
       "total": total
   }
-async def create_role_permissions(rp:RolePermission) -> dict[str, Any] | None:
-    insert_query= (insert(role_permissionsT)
-                   .value(rp.serializable_dict())
-                   .returning(role_permissionsT)
-                   )
+async def delete_role_permissions(id) -> dict[str, Any] | None:
+    insert_query= (delete(role_permissionsT).where(role_permissionsT.id == id))
     return await fetch_one(insert_query)

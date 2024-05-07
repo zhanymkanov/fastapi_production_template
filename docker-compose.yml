@@ -38,6 +38,16 @@ services:
       - '--requirepass myStrongPassword'
     ports:
       - 36379:6379
+  
+  app_milidb:
+    container_name: app_milidb
+    hostname: app_milidb
+    image:  getmeili/meilisearch:v1.7
+    volumes:
+      - app_meili_data/:/meili_data
+    ports:
+      - "7700:7700"
+
 
 volumes:
   app_pg_data:

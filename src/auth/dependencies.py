@@ -40,3 +40,11 @@ async def valid_refresh_token_user(
 
 def _is_valid_refresh_token(db_refresh_token: dict[str, Any]) -> bool:
     return datetime.utcnow() <= db_refresh_token["expires_at"]
+from functools import wraps
+
+def auth_required(func):
+    @wraps(func)
+    async def wrapper(*args, **kwargs):
+        return await valid_refresh_token()
+
+    return wrapper
