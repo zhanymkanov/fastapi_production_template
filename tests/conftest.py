@@ -25,8 +25,8 @@ def event_loop() -> Generator[asyncio.AbstractEventLoop, None, None]:
     loop.close()
 
 
-@pytest_asyncio.fixture
-async def client() -> AsyncGenerator[TestClient, None]:
+@pytest_asyncio.fixture(name="client")
+async def client_fixture() -> AsyncGenerator[TestClient, None]:
     host, port = "127.0.0.1", "9000"
     scope = {"client": (host, port)}
 
