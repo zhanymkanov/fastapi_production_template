@@ -7,13 +7,13 @@ router = APIRouter()
 
 # CRUD operations for roles
 
-@router.get("/roles/" )
+@router.get("/roles/", response_model=list[RolePermissionDB])
 async def create_rolepermision(page:int=1,per_page:int=10):
     return db.paginate_role_permissions(page=page,per_page=per_page)
-@router.post("/roles/")
+@router.post("/roles/", response_model=RolePermissionDB)
 async def create_rolepermision(roleP: RolePermission):
     return db.create_role_permissions(roleP)
-@router.put("/roles/")
+@router.put("/roles/", response_model=RolePermissionDB)
 async def update_rolepermision(db_role: RolePermissionDB):
     db_role = db.get_role_permission_by_id(db_role.id)
     if db_role in None:

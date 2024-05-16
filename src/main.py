@@ -53,6 +53,7 @@ async def healthcheck() -> dict[str, str]:
 
 
 app.include_router(auth_router, prefix="/auth", tags=["Auth"])
+app.include_router(Rpermission_router, prefix="/role", tags=["Role&permissions"])
 app.include_router(
     external_service_router, prefix="/external-service", tags=["External Service Calls"]
 )
