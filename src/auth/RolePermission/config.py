@@ -1,14 +1,14 @@
 from pydantic_settings import BaseSettings
-from enum import Enum
+from enum import Enum,Flag,auto
 from dataclasses import dataclass
 class CRUD(Enum):
     CREATE="CREATE"
     READ="READ"
     UPDATE="UPDATE"
     DELETE="DELETE"
-class Languages(Enum):
-    FA:0
-    ENG:1
+class Languages(Flag):
+    FA="fa"
+    ENG="eng"
 class MultiLangMessage():
     messages:dict
 
@@ -27,7 +27,7 @@ class MultiLangMessage():
 class permission:
     id:int
     name:MultiLangMessage
-    actions:list[str] = [action for action in CRUD]
+    actions:list[str] = None
 
 permission_conf: {permission} = {
     "user":permission(

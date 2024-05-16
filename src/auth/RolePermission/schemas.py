@@ -3,7 +3,7 @@ import re
 from pydantic import EmailStr, Field, field_validator
 
 from src.models import CustomModel
-from config import permission_conf
+from src.auth.RolePermission.config import permission_conf
 STRONG_PASSWORD_PATTERN = re.compile(r"^(?=.*[\d])(?=.*[!@#$%^&*])[\w!@#$%^&*]{6,128}$")
 
 
@@ -21,19 +21,17 @@ class RolePermission(CustomModel):
                 )
             for action in actions:
                 if action not in permission_conf[permission].actions:
+                    actions = permission_conf[permission].actions.join(",")
                     raise ValueError(
-                    f"{permission} actions are [{permission_conf[permission].actions.join(",")}]"
+                    f"{permission} actions are [{actions}]"
                     )   
                 
 
         return permissions
 
 
-class RolePermissionDB(CustomModel):
+class RolePermissionDB(RolePermission):
     id: int
-    name: str
-    roles: list[Role] = []
-
     class Config:
         orm_mode = True
 

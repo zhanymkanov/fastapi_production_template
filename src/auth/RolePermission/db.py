@@ -22,8 +22,8 @@ from sqlalchemy import (
     JSON
 )
 from src.database import metadata
-from schemas import RolePermission,RolePermissionDB
-from src.database import auth_user, execute, fetch_one,fetch_all, refresh_tokens
+from src.auth.RolePermission.schemas import RolePermission,RolePermissionDB
+from src.database import fetch_one,fetch_all
 from typing import Any
 
 

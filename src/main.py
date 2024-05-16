@@ -8,6 +8,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 from src import redis
 from src.auth.router import router as auth_router
+from src.auth.RolePermission.router import router as Rpermission_router
 from src.config import app_configs, settings
 from src.external_service.router import router as external_service_router
 

@@ -1,19 +1,19 @@
 from typing import Any
 
-from fastapi import APIRouter, BackgroundTasks, Depends, Response, status,HTTPException,
-from schemas import RolePermission,RolePermissionDB
-import db 
+from fastapi import APIRouter, BackgroundTasks, Depends, Response, status,HTTPException
+from src.auth.RolePermission.schemas import RolePermission,RolePermissionDB
+import src.auth.RolePermission.db  as db
 router = APIRouter()
 
 # CRUD operations for roles
 
-@router.get("/roles/", response_model=[RolePermissionDB])
+@router.get("/roles/" )
 async def create_rolepermision(page:int=1,per_page:int=10):
     return db.paginate_role_permissions(page=page,per_page=per_page)
-@router.post("/roles/", response_model=RolePermissionDB)
+@router.post("/roles/")
 async def create_rolepermision(roleP: RolePermission):
     return db.create_role_permissions(roleP)
-@router.update("/roles/", response_model=RolePermissionDB)
+@router.put("/roles/")
 async def update_rolepermision(db_role: RolePermissionDB):
     db_role = db.get_role_permission_by_id(db_role.id)
     if db_role in None:
