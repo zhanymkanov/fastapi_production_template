@@ -11,8 +11,8 @@ DB_NAMING_CONVENTION = {
 
 class Environment(str, Enum):
     LOCAL = "LOCAL"
-    STAGING = "STAGING"
     TESTING = "TESTING"
+    STAGING = "STAGING"
     PRODUCTION = "PRODUCTION"
 
     @property
