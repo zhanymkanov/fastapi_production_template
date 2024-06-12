@@ -31,11 +31,18 @@ apt install just
 
 Others: [link](https://github.com/casey/just?tab=readme-ov-file#packages)
 
-### Setup Database
+### Setup poetry
+```shell
+pip install poetry
+```
+
+Other ways: [link](https://python-poetry.org/docs/#installation)
+
+### Setup Postgres (16.3)
 ```shell
 just up
 ```
-### Setup Dependencies & Environment variables
+### Copy the environment file and install dependencies
 1. `cp .env.example .env`
 2. `poetry install`
 
