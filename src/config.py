@@ -1,14 +1,19 @@
 from typing import Any
 
-from pydantic import PostgresDsn, RedisDsn, model_validator
-from pydantic_settings import BaseSettings
+from pydantic import PostgresDsn, model_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from src.constants import Environment
 
 
-class Config(BaseSettings):
+class CustomBaseSettings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env", env_file_encoding="utf-8", extra="ignore"
+    )
+
+
+class Config(CustomBaseSettings):
     DATABASE_URL: PostgresDsn
-    REDIS_URL: RedisDsn
 
     SITE_DOMAIN: str = "myapp.com"
 
@@ -20,7 +25,7 @@ class Config(BaseSettings):
     CORS_ORIGINS_REGEX: str | None = None
     CORS_HEADERS: list[str]
 
-    APP_VERSION: str = "1"
+    APP_VERSION: str = "0.1"
 
     @model_validator(mode="after")
     def validate_sentry_non_local(self) -> "Config":

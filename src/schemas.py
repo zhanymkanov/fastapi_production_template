@@ -1,12 +1,11 @@
 from datetime import datetime
-from typing import Any
 from zoneinfo import ZoneInfo
 
 from fastapi.encoders import jsonable_encoder
-from pydantic import BaseModel, ConfigDict, model_validator
+from pydantic import BaseModel, ConfigDict
 
 
-def convert_datetime_to_gmt(dt: datetime) -> str:
+def datetime_to_gmt_str(dt: datetime) -> str:
     if not dt.tzinfo:
         dt = dt.replace(tzinfo=ZoneInfo("UTC"))
 
@@ -15,20 +14,9 @@ def convert_datetime_to_gmt(dt: datetime) -> str:
 
 class CustomModel(BaseModel):
     model_config = ConfigDict(
-        json_encoders={datetime: convert_datetime_to_gmt},
+        json_encoders={datetime: datetime_to_gmt_str},
         populate_by_name=True,
     )
-
-    @model_validator(mode="before")
-    @classmethod
-    def set_null_microseconds(cls, data: dict[str, Any]) -> dict[str, Any]:
-        datetime_fields = {
-            k: v.replace(microsecond=0)
-            for k, v in data.items()
-            if isinstance(k, datetime)
-        }
-
-        return {**data, **datetime_fields}
 
     def serializable_dict(self, **kwargs):
         """Return a dict which contains only serializable fields."""

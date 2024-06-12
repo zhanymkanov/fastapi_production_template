@@ -1,0 +1,16 @@
+version: '3.7'
+
+services:
+  app:
+    container_name: app
+    image: app
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    command:
+      - entrypoints/gunicorn.sh
+

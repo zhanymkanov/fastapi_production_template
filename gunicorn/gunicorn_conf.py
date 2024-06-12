@@ -1,42 +1,65 @@
-# based on https://github.com/tiangolo/uvicorn-gunicorn-fastapi-docker
-
 import multiprocessing
-import os
 
-host = os.getenv("HOST", "0.0.0.0")
-port = os.getenv("PORT", "9000")
-bind_env = os.getenv("BIND", None)
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
-use_bind = bind_env if bind_env else f"{host}:{port}"
+try:
+    from prometheus_client import multiprocess
 
-workers_per_core_str = os.getenv("WORKERS_PER_CORE", "1")
-max_workers_str = os.getenv("MAX_WORKERS")
-web_concurrency_str = os.getenv("WEB_CONCURRENCY", None)
+    def child_exit(_, worker):
+        multiprocess.mark_process_dead(worker.pid)
 
-cores = multiprocessing.cpu_count()
-workers_per_core = int(workers_per_core_str)
-default_web_concurrency = workers_per_core * cores + 1
+except ImportError:
+    pass
 
-if web_concurrency_str:
-    web_concurrency = int(web_concurrency_str)
-    assert web_concurrency > 0
-else:
-    web_concurrency = max(int(default_web_concurrency), 2)
-    if max_workers_str:
-        use_max_workers = int(max_workers_str)
-        web_concurrency = min(web_concurrency, use_max_workers)
 
-graceful_timeout_str = os.getenv("GRACEFUL_TIMEOUT", "120")
-timeout_str = os.getenv("TIMEOUT", "120")
-keepalive_str = os.getenv("KEEP_ALIVE", "5")
-use_loglevel = os.getenv("LOG_LEVEL", "info")
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env", env_file_encoding="utf-8", extra="ignore"
+    )
+
+    host: str = "0.0.0.0"
+    port: int = 9000
+    bind: str | None = None
+
+    workers_per_core: int = Field(1)
+    max_workers: int | None = None
+    web_concurrency: int | None = None
+
+    graceful_timeout: int = 120
+    timeout: int = 120
+    keepalive: int = 5
+    log_level: str = "INFO"
+    log_config: str = "/src/logging_production.ini"
+
+    @property
+    def computed_bind(self) -> str:
+        return self.bind if self.bind else f"{self.host}:{self.port}"
+
+    @property
+    def computed_web_concurrency(self) -> int:
+        cores = multiprocessing.cpu_count()
+        default_web_concurrency = self.workers_per_core * cores + 1
+
+        if self.web_concurrency:
+            assert self.web_concurrency > 0
+            return self.web_concurrency
+        else:
+            web_concurrency = max(default_web_concurrency, 2)
+            if self.max_workers:
+                return min(web_concurrency, self.max_workers)
+
+            return web_concurrency
+
+
+settings = Settings()
 
 # Gunicorn config variables
-loglevel = use_loglevel
-workers = web_concurrency
-bind = use_bind
+loglevel = settings.log_level
+workers = settings.computed_web_concurrency
+bind = settings.computed_bind
 worker_tmp_dir = "/dev/shm"
-graceful_timeout = int(graceful_timeout_str)
-timeout = int(timeout_str)
-keepalive = int(keepalive_str)
-logconfig = os.getenv("LOG_CONFIG", "/src/logging_production.ini")
+graceful_timeout = settings.graceful_timeout
+timeout = settings.timeout
+keepalive = settings.keepalive
+logconfig = settings.log_config
