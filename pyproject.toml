@@ -12,12 +12,12 @@ fastapi = "^0.111.0"
 alembic = "^1.13.1"
 psycopg2-binary = "^2.9.9"
 httpx = "^0.27.0"
-sqlalchemy = "^2.0.30"
 pydantic = {extras = ["email"], version = "^2.7.4"}
 pydantic-settings = "^2.3.2"
 asyncpg = "^0.29.0"
 uvicorn = {extras = ["standard"], version = "^0.30.1"}
 sentry-sdk = "^2.5.1"
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.30"}
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.4.8"
