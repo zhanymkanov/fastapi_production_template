@@ -14,16 +14,15 @@ class CustomBaseSettings(BaseSettings):
 
 class Config(CustomBaseSettings):
     DATABASE_URL: PostgresDsn
-
-    SITE_DOMAIN: str = "myapp.com"
+    DATABASE_ASYNC_URL: PostgresDsn
 
     ENVIRONMENT: Environment = Environment.PRODUCTION
 
     SENTRY_DSN: str | None = None
 
-    CORS_ORIGINS: list[str]
+    CORS_ORIGINS: list[str] = ["*"]
     CORS_ORIGINS_REGEX: str | None = None
-    CORS_HEADERS: list[str]
+    CORS_HEADERS: list[str] = ["*"]
 
     APP_VERSION: str = "0.1"
 

@@ -12,7 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncConnection, create_async_engine
 from src.config import settings
 from src.constants import DB_NAMING_CONVENTION
 
-DATABASE_URL = str(settings.DATABASE_URL)
+DATABASE_URL = str(settings.DATABASE_ASYNC_URL)
 
 engine = create_async_engine(DATABASE_URL)
 metadata = MetaData(naming_convention=DB_NAMING_CONVENTION)
@@ -77,10 +77,3 @@ async def get_db_connection() -> AsyncConnection:
         yield connection
     finally:
         await connection.close()
-
-
-async def open_db_connection(autocommit: bool = False) -> AsyncConnection:
-    if autocommit:
-        return await engine.begin()
-
-    return await engine.connect()
