@@ -5,6 +5,7 @@ This repo is kind of a template I use when starting up new FastAPI projects:
   - script to lint code with `ruff` and `ruff format`
 - SQLAlchemy with slightly configured `alembic`
   - async SQLAlchemy engine
+  - pessimistic connection pooling configuration ([link](https://docs.sqlalchemy.org/en/20/core/pooling.html#module-sqlalchemy.pool))
   - migrations set in easy to sort format (`YYYY-MM-DD_slug`)
   - migrations are formated with `ruff`
 - global pydantic model with 
