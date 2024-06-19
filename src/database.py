@@ -14,7 +14,12 @@ from src.constants import DB_NAMING_CONVENTION
 
 DATABASE_URL = str(settings.DATABASE_ASYNC_URL)
 
-engine = create_async_engine(DATABASE_URL)
+engine = create_async_engine(
+    DATABASE_URL,
+    pool_size=settings.DATABASE_POOL_SIZE,
+    pool_recycle=settings.DATABASE_POOL_TTL,
+    pool_pre_ping=settings.DATABASE_POOL_PRE_PING,
+)
 metadata = MetaData(naming_convention=DB_NAMING_CONVENTION)
 
 
