@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     )
 
     host: str = "0.0.0.0"
-    port: int = 9000
+    port: int = 8000
     bind: str | None = None
 
     workers_per_core: int = Field(1)
